@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aspire.user.config.JwtAuthentication;
-import com.aspire.user.config.SecurityConfig;
 import com.aspire.user.service.UserService;
 import com.aspire.user.utils.JwtToken;
 import com.aspire.user.utils.MyToken;

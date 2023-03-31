@@ -1,9 +1,5 @@
 package com.aspire.user.utils;
 
-import java.util.Collection;
-
-import org.springframework.security.core.GrantedAuthority;
-
 public class JwtToken {
 	
 	private String userName;

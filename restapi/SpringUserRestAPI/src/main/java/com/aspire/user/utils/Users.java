@@ -1,5 +1,6 @@
 package com.aspire.user.utils;
 
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -11,11 +12,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table
-public class Users {
+public class Users{
  
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,12 +38,15 @@ public class Users {
 	
 	private String role;
 	
+	
+	
 
 	@Override
 	public String toString() {
 		return "Users [id=" + id + ", userName=" + userName + ", userPassword=" + userPassword + ", userAddress="
 				+ userAddress + ", dob=" + dob + "]";
 	}
+	
 	public String getUserName() {
 		return userName;
 	}
@@ -70,11 +77,26 @@ public class Users {
 	public void setDob(Date dob) {
 		this.dob = dob;
 	}
+	public Users() {
+		
+	}
+
 	public String getRole() {
 		return role;
 	}
 	public void setRole(String role) {
 		this.role = "User";
 	}
+
+	public Users(int id, String userName, String userPassword, String userAddress, Date dob, String role) {
+		super();
+		this.id = id;
+		this.userName = userName;
+		this.userPassword = userPassword;
+		this.userAddress = userAddress;
+		this.dob = dob;
+		this.role = role;
+	}
+	
 	
 }
