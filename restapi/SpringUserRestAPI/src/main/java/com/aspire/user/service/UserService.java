@@ -1,17 +1,19 @@
 package com.aspire.user.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 
 import com.aspire.user.userDao.UserRepository;
+import com.aspire.user.utils.JwtToken;
 import com.aspire.user.utils.Users;
 
 @Service
@@ -52,17 +54,19 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		try {
+	
 //			System.out.println(user);
+		try {
 			Users user= repository.findByUserName(username);
-			System.out.println(user);
-			return new User(user.getUserName(),user.getUserPassword(),new ArrayList<>());
-		}
-		catch(UsernameNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
 		
+			System.out.println(user);
+			return new User(user.getUserName(),user.getUserPassword(),user.getAuthorities());
+		}
+		catch(Exception e) 
+		{
+			e.printStackTrace();
+			throw new UsernameNotFoundException("user not found by given username ");
+		}
 //		if(username.equals("nikhar")) {
 //			return new User("nikhar","panchal",new ArrayList<>());
 //		}else
