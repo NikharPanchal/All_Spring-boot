@@ -39,7 +39,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
+	     http
+         .cors().configurationSource(corsConfigurationSource())
+         .and()
+         .csrf().disable()	
+         .authorizeRequests()
+         .anyRequest().authenticated()
+         .and()
+         .httpBasic();
 	}
 	
 	 @Bean
@@ -57,9 +64,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//		auth.inMemoryAuthentication().withUser("admin").password("admin").roles("admin");
-//		auth.userDetailsService(blogService);
+		auth.inMemoryAuthentication().withUser("admin").password(passwordEncoder().encode("admin")).roles("USER");
+//		.and().withUser("user").password("admin").roles("USER","");
+		auth.userDetailsService(blogService)
+		.passwordEncoder(passwordEncoder());
 	}
-	
 
 }

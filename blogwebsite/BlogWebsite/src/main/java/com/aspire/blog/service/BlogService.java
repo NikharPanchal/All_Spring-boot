@@ -1,15 +1,17 @@
 package com.aspire.blog.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.aspire.blog.dao.BlogDao;
+import com.aspire.blog.utils.JwtToken;
 import com.aspire.blog.utils.User;
 
 @Service
@@ -49,5 +51,20 @@ public class BlogService implements UserDetailsService{
 		return null;
 	}
 
+	public void updateUserStatus(Integer userId) {
+		blogDao.updateUserStatus(userId);
+	}
 
+	public Boolean checkLoginData(User user) {
+		Boolean email=blogDao.existsByEmail(user.getEmail());
+		Boolean password=blogDao.existsByPassword(user.getPassword());
+		if(email&&password)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
