@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table
-public class Users implements UserDetails{
+public class Users{
  
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,14 +44,16 @@ public class Users implements UserDetails{
 	@Column
 	private Date dob;
 	
+	@Column
+	private String role;
 	
 	@Transient
 	private Collection<? extends GrantedAuthority> authorities;
 	
-	@Column
-	@Enumerated(EnumType.STRING)
-	@ElementCollection(fetch=FetchType.EAGER)
-	private Set<Role> role=new HashSet<>();
+//	@Column
+//	@Enumerated(EnumType.STRING)
+//	@ElementCollection(fetch=FetchType.EAGER)
+//	private Set<Role> role=new HashSet<>();
 
 	@Override
 	public String toString() {
@@ -104,67 +106,39 @@ public class Users implements UserDetails{
 	
 
 	public Users(int id, String userName, String userPassword, String userAddress, Date dob,
-			Collection<? extends GrantedAuthority> authorities, Set<Role> role) {
+			String role) {
 		super();
 		this.id = id;
 		this.userName = userName;
 		this.userPassword = userPassword;
 		this.userAddress = userAddress;
 		this.dob = dob;
-		this.authorities = authorities;
-		this.role = role;
+		this.role=role;
 	}
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		Set<GrantedAuthority> authorities=new HashSet<>();
-		for(Role r: this.role)
-		{	
-			SimpleGrantedAuthority auth=new SimpleGrantedAuthority(r.name());
-			authorities.add(auth);
-		}
-		return authorities;
-	}
+//	@Override
+//	public Collection<? extends GrantedAuthority> getAuthorities() {
+//		Set<GrantedAuthority> authorities=new HashSet<>();
+//		for(Role r: this.getRole())
+//		{	
+//			SimpleGrantedAuthority auth=new SimpleGrantedAuthority(r.name());
+//			authorities.add(auth);
+//		}
+//		return authorities;
+//	}
 
-	@Override
-	public String getPassword() {
-		// TODO Auto-generated method stub
-		return userPassword;
-	}
-
-	@Override
-	public String getUsername() {
-		// TODO Auto-generated method stub
-		return userName;
-	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return true;
-	}
 
 	public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
 		this.authorities = authorities;
 	}
-	
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
 	
 }

@@ -37,8 +37,10 @@ public class JwtAuthentication {
     }
 
     public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+    	 Map<String, Object> claims = new HashMap<>();
+         claims.put("username", userDetails.getUsername());
+         claims.put("role", userDetails.getAuthorities().iterator().next().getAuthority());
+         return createToken(claims, userDetails.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {

@@ -1,10 +1,12 @@
 package com.aspire.user.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -56,17 +58,19 @@ public class UserService implements UserDetailsService {
 		
 	
 //			System.out.println(user);
-		try {
+
 			Users user= repository.findByUserName(username);
-		
 			System.out.println(user);
-			return new User(user.getUserName(),user.getUserPassword(),user.getAuthorities());
-		}
-		catch(Exception e) 
-		{
-			e.printStackTrace();
-			throw new UsernameNotFoundException("user not found by given username ");
-		}
+			if(user==null)
+			{
+				throw new UsernameNotFoundException("user not found by given username ");
+			}
+			
+			List<SimpleGrantedAuthority> authority=Arrays.asList(new SimpleGrantedAuthority(user.getRole()));
+			
+			return new User(user.getUserName(),user.getUserPassword(),authority);
+
+			
 //		if(username.equals("nikhar")) {
 //			return new User("nikhar","panchal",new ArrayList<>());
 //		}else
