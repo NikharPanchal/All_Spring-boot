@@ -59,6 +59,7 @@ public class UserService implements UserDetailsService {
 	
 //			System.out.println(user);
 
+			System.out.println(username);
 			Users user= repository.findByUserName(username);
 			System.out.println(user);
 			if(user==null)
@@ -67,6 +68,7 @@ public class UserService implements UserDetailsService {
 			}
 			
 			List<SimpleGrantedAuthority> authority=Arrays.asList(new SimpleGrantedAuthority(user.getRole()));
+			System.out.println(authority);
 			
 			return new User(user.getUserName(),user.getUserPassword(),authority);
 

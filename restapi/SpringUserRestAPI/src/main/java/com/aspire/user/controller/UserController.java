@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -68,6 +69,9 @@ public class UserController {
 		System.out.println(userdetails);
 		
 		String mytoken =authentication.generateToken(userdetails);
+		
+		
+		
 		return ResponseEntity.ok().body(new MyToken(mytoken));	
 	}
 
@@ -99,16 +103,25 @@ public class UserController {
 	}
 
 	@GetMapping("/user/{id}")
-	public Optional<Users> getUserById(@PathVariable("id") int id) {
-		Optional<Users> user = userService.getUserbyId(id);
-		return user;
+	public ResponseEntity<Optional<Users>> getUserById(@PathVariable("id") int id) {
+		Optional<Users> user=null;
+		try {
+			user = userService.getUserbyId(id);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			//throw new UsernameNotFoundException("id not found");
+		}
+		return ResponseEntity.ok(user);
 	}
 
 	@PutMapping("/edit/{id}")
 	public Users editUser(@PathVariable("id") int id, @RequestBody Users user) {
 		Optional<Users> userRespo = userService.getUserbyId(id);
 		System.out.println(user.toString());
-		return user= userService.saveUserDetails(user);
+		return user= userService.saveUserDetails(user);	
 	}
 	
 	@PostMapping("/login")
