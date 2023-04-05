@@ -5,12 +5,13 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +20,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.aspire.user.config.JwtAuthentication;
 import com.aspire.user.service.UserService;
+import com.aspire.user.utils.FileUploadUtil;
+import com.aspire.user.utils.Images;
 import com.aspire.user.utils.JwtToken;
 import com.aspire.user.utils.MyToken;
 import com.aspire.user.utils.Users;
@@ -136,4 +141,32 @@ public class UserController {
 		return ResponseEntity.ok(user);
 	}
 	
+	@PostMapping("/savefile")
+	public ResponseEntity saveFileData(@RequestPart("img") MultipartFile file) {
+		Images image=new Images();
+		try {
+		if(!file.isEmpty())
+		{
+			String cleanPath = StringUtils.cleanPath(file.getOriginalFilename());
+			System.out.println(cleanPath);
+			image.setImage(cleanPath);
+			userService.saveImage(image);
+			String upload="images/"+image.getId();
+			
+			FileUploadUtil.saveFile(upload, cleanPath, file);
+		}
+		else {
+			if(image.getImage().isEmpty()) {
+				image.setImage(null);
+				userService.saveImage(image);
+			}
+		}
+		
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		return ResponseEntity.status(HttpStatus.ACCEPTED).build();	
+	}
 }

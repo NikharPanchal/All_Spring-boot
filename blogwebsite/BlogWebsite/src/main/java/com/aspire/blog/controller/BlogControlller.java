@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aspire.blog.service.BlogService;
 import com.aspire.blog.utils.JwtToken;
-import com.aspire.blog.utils.User;
+import com.aspire.blog.utils.Users;
 
 @RestController
 @RequestMapping("/blog")
@@ -40,8 +40,8 @@ public class BlogControlller {
 	private AuthenticationManager authenticationManager;
 	
 	@GetMapping("/users")
-	public ResponseEntity<List<User>> getAllUser(){
-		List<User> userList = null;
+	public ResponseEntity<List<Users>> getAllUser(){
+		List<Users> userList = null;
 		try {
 		userList=service.getAllUser();
 		}catch (Exception e) {
@@ -52,8 +52,8 @@ public class BlogControlller {
 	}
 	
 	@PostMapping("/save")
-	public ResponseEntity<User> saveUserDetails(@RequestBody User user) {
-		User userResponse = null;
+	public ResponseEntity<Users> saveUserDetails(@RequestBody Users user) {
+		Users userResponse = null;
 		try {
 		 userResponse=service.saveUserInfo(user);
 		}catch(Exception e)
@@ -65,8 +65,8 @@ public class BlogControlller {
 	}
 	
 	@GetMapping("/hasuser")
-	public ResponseEntity<List<User>> getAllHasUser(){
-		List<User> userList = null;
+	public ResponseEntity<List<Users>> getAllHasUser(){
+		List<Users> userList = null;
 		try {
 		System.out.println("***");
 		userList=service.getAllHasUser();
@@ -93,8 +93,8 @@ public class BlogControlller {
 	}
 	
 	@GetMapping("/userbyid/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable("id") Integer id){
-		User user = null;
+	public ResponseEntity<Users> getUserById(@PathVariable("id") Integer id){
+		Users user = null;
 		try {
 		user=service.getUserById(id);
 		}catch (Exception e) {
@@ -105,9 +105,9 @@ public class BlogControlller {
 	}
 	
 	@PutMapping("/update/{id}")
-	public ResponseEntity<User> updateUserInfo(@PathVariable("id") Integer id, @RequestBody User user){
-		User userResponse = null;
-		User getUserByid=null;
+	public ResponseEntity<Users> updateUserInfo(@PathVariable("id") Integer id, @RequestBody Users user){
+		Users userResponse = null;
+		Users getUserByid=null;
 		try {		
 		getUserByid=service.getUserById(id);
 		System.out.println(getUserByid);
@@ -141,7 +141,7 @@ public class BlogControlller {
 	}
 	
 	@PostMapping("/logincredential")
-	public ResponseEntity checkLoginCredential(@RequestBody User user) {
+	public ResponseEntity checkLoginCredential(@RequestBody Users user) {
 	
 		System.out.println(user.getEmail());
 		System.out.println(user.getPassword());

@@ -10,13 +10,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.aspire.blog.utils.JwtToken;
-import com.aspire.blog.utils.User;
+import com.aspire.blog.utils.Users;
 
 @Repository
-public interface BlogDao extends JpaRepository<User, Integer> {
+public interface BlogDao extends JpaRepository<Users, Integer> {
 
 	@Query(value = "SELECT * FROM user_table where role='user'",nativeQuery = true)
-	List<User> findAllHasUser();
+	List<Users> findAllHasUser();
 
 	@Modifying
 	@Transactional
@@ -26,6 +26,9 @@ public interface BlogDao extends JpaRepository<User, Integer> {
 	Boolean existsByEmail(String string);
 
 	Boolean existsByPassword(String password);
+
+	Users findByEmail(String username);
+
 
 //	@Query(value="SELECT * from user_table WHERE email=?1",nativeQuery = true)
 //	public User findByEmailAddress(String email);

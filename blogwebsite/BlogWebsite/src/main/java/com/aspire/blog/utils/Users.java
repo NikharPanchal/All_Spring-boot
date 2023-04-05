@@ -1,15 +1,20 @@
 package com.aspire.blog.utils;
 
+import java.util.Collection;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @Table(name = "user_table")
-public class User {
+public class Users {
 	  
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,6 +37,16 @@ public class User {
 	
 	@Column(name="isactive")
 	boolean isactive;
+	
+	@Transient
+	private Collection<? extends GrantedAuthority> authorities;
+
+	public Users(String email, String password, Collection<? extends GrantedAuthority> authorities) {
+		super();
+		this.email = email;
+		this.password = password;
+		this.authorities = authorities;
+	}
 
 	public int getId() {
 		return id;
@@ -89,7 +104,7 @@ public class User {
 		this.isactive = isactive;
 	}
 
-	public User(int id, String fname, String lname, String email, String password, String role, boolean isactive) {
+	public Users(int id, String fname, String lname, String email, String password, String role, boolean isactive) {
 		super();
 		this.id = id;
 		this.fname = fname;
@@ -100,7 +115,7 @@ public class User {
 		this.isactive = isactive;
 	}
 
-	public User() {
+	public Users() {
 		
 	}
 
@@ -108,6 +123,14 @@ public class User {
 	public String toString() {
 		return "User [id=" + id + ", fname=" + fname + ", lname=" + lname + ", email=" + email + ", password="
 				+ password + ", role=" + role + ", isactive=" + isactive + "]";
+	}
+
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return authorities;
+	}
+
+	public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+		this.authorities = authorities;
 	}
 	
 	
