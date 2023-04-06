@@ -1,25 +1,20 @@
 package com.aspire.user.service;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.parser.Part;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.aspire.user.userDao.ImageRepository;
 import com.aspire.user.userDao.UserRepository;
 import com.aspire.user.utils.Images;
-import com.aspire.user.utils.JwtToken;
 import com.aspire.user.utils.Users;
 
 @Service

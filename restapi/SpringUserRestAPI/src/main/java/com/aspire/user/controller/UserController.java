@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,49 +34,48 @@ import com.aspire.user.utils.Users;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:4200")
-public class UserController { 
+public class UserController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
+
 	@Autowired
-	private UserService userService; 
-		
+	private UserService userService;
+
 	@Autowired
 	private JwtAuthentication authentication;
-	
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 //	@Autowired
 //	private SecurityConfig securityConfig;
-	
+
 //	Collection<SimpleGrantedAuthority> oldAuthorities = (Collection<SimpleGrantedAuthority>)SecurityContextHolder.getContext().getAuthentication().getAuthorities();
 //	SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_ANOTHER");
 //	List<SimpleGrantedAuthority> updatedAuthorities = new ArrayList<SimpleGrantedAuthority>();
 //	updatedAuthorities.add(authority);
 //	updatedAuthorities.addAll(oldAuthorities);
-	
+
 	@PostMapping("/token")
-	public ResponseEntity<?> generateToken(@RequestBody JwtToken token) throws Exception{
-		
+	public ResponseEntity<?> generateToken(@RequestBody JwtToken token) throws Exception {
+
 		System.out.println(token.getUserName());
 		System.out.println(token.getUserpassword());
 		try {
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(token.getUserName(),token.getUserpassword()));	
-			
-		}catch(Exception e) {
+			authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(token.getUserName(), token.getUserpassword()));
+
+		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong credentials");
 		}
-		UserDetails userdetails=userService.loadUserByUsername(token.getUserName());
+		UserDetails userdetails = userService.loadUserByUsername(token.getUserName());
 		System.out.println(userdetails);
-		
-		String mytoken =authentication.generateToken(userdetails);
-		
-		
-		
-		return ResponseEntity.ok().body(new MyToken(mytoken));	
+
+		String mytoken = authentication.generateToken(userdetails);
+
+		return ResponseEntity.ok().body(new MyToken(mytoken));
 	}
 
 	@GetMapping("/home")
@@ -89,17 +87,17 @@ public class UserController {
 	public ResponseEntity<List<Users>> getUsers() {
 		List<Users> userList = userService.getAllUsers();
 		System.out.println(userList);
-		if(userList.size()<0) {
+		if (userList.size() < 0) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 		return ResponseEntity.ok().body(userList);
-	} 
+	}
 
 	@PostMapping("/save")
 	public Users saveUser(@RequestBody Users user) {
 		user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
-		Users userdata=userService.saveUserDetails(user);
-		return userdata;  
+		Users userdata = userService.saveUserDetails(user);
+		return userdata;
 	}
 
 	@DeleteMapping("/user/{id}")
@@ -109,15 +107,13 @@ public class UserController {
 
 	@GetMapping("/user/{id}")
 	public ResponseEntity<Optional<Users>> getUserById(@PathVariable("id") int id) {
-		Optional<Users> user=null;
+		Optional<Users> user = null;
 		try {
 			user = userService.getUserbyId(id);
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-			//throw new UsernameNotFoundException("id not found");
+			// throw new UsernameNotFoundException("id not found");
 		}
 		return ResponseEntity.ok(user);
 	}
@@ -126,47 +122,45 @@ public class UserController {
 	public Users editUser(@PathVariable("id") int id, @RequestBody Users user) {
 		Optional<Users> userRespo = userService.getUserbyId(id);
 		System.out.println(user.toString());
-		return user= userService.saveUserDetails(user);	
+		return user = userService.saveUserDetails(user);
 	}
-	
+
 	@PostMapping("/login")
 	public ResponseEntity<Users> checkLoginCredential(@RequestBody Users username) {
 		System.out.println(username.getUserName());
-		Users user=userService.findByUsername(username.getUserName());
+		Users user = userService.findByUsername(username.getUserName());
 		System.out.println(user);
-		if(user==null)
-		{
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();	
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 		return ResponseEntity.ok(user);
 	}
-	
+
 	@PostMapping("/savefile")
-	public ResponseEntity saveFileData(@RequestPart("img") MultipartFile file) {
-		Images image=new Images();
-		try {
-		if(!file.isEmpty())
-		{
-			String cleanPath = StringUtils.cleanPath(file.getOriginalFilename());
-			System.out.println(cleanPath);
-			image.setImage(cleanPath);
-			userService.saveImage(image);
-			String upload="images/"+image.getId();
-			
-			FileUploadUtil.saveFile(upload, cleanPath, file);
-		}
-		else {
-			if(image.getImage().isEmpty()) {
-				image.setImage(null);
-				userService.saveImage(image);
-			}
-		}
+	public ResponseEntity<?> saveFileData(@RequestPart("img") MultipartFile file) {
+		Images image = new Images();
 		
-		}
-		catch(Exception e) {
+		try {
+			
+			if (!file.isEmpty()) {
+				String cleanPath = StringUtils.cleanPath(file.getOriginalFilename());
+				System.out.println(cleanPath);
+				image.setImage(cleanPath);
+				userService.saveImage(image);
+				String upload = "images/" + image.getId();
+
+				FileUploadUtil.saveFile(upload, cleanPath, file);
+			} else {
+				if (image.getImage().isEmpty()) {
+					image.setImage(null);
+					userService.saveImage(image);
+				}
+			}
+
+		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
-		return ResponseEntity.status(HttpStatus.ACCEPTED).build();	
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body("Save file success");
 	}
 }
