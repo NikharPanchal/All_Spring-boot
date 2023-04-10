@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,8 +19,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aspire.blog.config.JWTAuthentication;
 import com.aspire.blog.service.BlogService;
+import com.aspire.blog.utils.JwtToken;
+import com.aspire.blog.utils.MyToken;
 import com.aspire.blog.utils.Users;
+
 
 @RestController
 @RequestMapping("/blog")
@@ -29,10 +35,13 @@ public class BlogControlller {
 	private BlogService service;
 
 	@Autowired
-	private PasswordEncoder encoder;
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private JWTAuthentication authentication;
 
 	@GetMapping("/users")
 	public ResponseEntity<List<Users>> getAllUser() {
@@ -50,6 +59,8 @@ public class BlogControlller {
 	public ResponseEntity<Users> saveUserDetails(@RequestBody Users user) {
 		Users userResponse = null;
 		try {
+			//user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
 			userResponse = service.saveUserInfo(user);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -81,7 +92,7 @@ public class BlogControlller {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Delete failed");
 
 		}
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body("Delete Success");
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 	@GetMapping("/userbyid/{id}")
@@ -116,35 +127,37 @@ public class BlogControlller {
 		return ResponseEntity.accepted().body(userResponse);
 	}
 
-	@PutMapping("/status/{id}")
-	public ResponseEntity updateStatus(@PathVariable("id") Integer userId) {
+	@GetMapping("/status/{id}")
+	public ResponseEntity<String> updateStatus(@PathVariable("id") Integer userId) {
 		try {
+			System.out.println("in update api");
 			service.updateUserStatus(userId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error");
 		}
-		return ResponseEntity.status(HttpStatus.OK).body("Update Status success");
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@PostMapping("/logincredential")
-	public ResponseEntity checkLoginCredential(@RequestBody Users user) {
+	@PostMapping("/token")
+	public ResponseEntity generateToken(@RequestBody JwtToken token) throws Exception {
 
-		System.out.println(user.getEmail());
-		System.out.println(user.getPassword());
-		Boolean response = false;
+		System.out.println(token.getEmail());
+		System.out.println(token.getPassword());
 		try {
-			response = service.checkLoginData(user);
-			System.out.println(response);
+			authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(token.getEmail(), token.getPassword()));
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong credentials");
 		}
-		if (response) {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body("Login credential are valid");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("invalid credential");
-		}
+		UserDetails userdetails = service.loadUserByUsername(token.getEmail());
+		System.out.println(userdetails);
+
+		String mytoken = authentication.generateToken(userdetails);
+
+		return ResponseEntity.ok().body(new MyToken(mytoken));
 	}
 
 }
