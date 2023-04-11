@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.aspire.blog.service.BlogService;
+import com.aspire.blog.service.UserService;
 
 import lombok.AllArgsConstructor;
 
@@ -27,7 +27,7 @@ import lombok.AllArgsConstructor;
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 	@Autowired
-	BlogService blogService;
+	UserService blogService;
 	
 	@Autowired
 	private JWTAuthenticationFilter jwtFilter;
@@ -49,7 +49,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         .and()
         .csrf().disable()	
         .authorizeRequests()
-        .antMatchers("/api/blog/**").permitAll()
+        .antMatchers("/blog/**").permitAll()
+        .antMatchers("/blogs/**").permitAll()
         .anyRequest().authenticated()
         .and()
         .httpBasic()

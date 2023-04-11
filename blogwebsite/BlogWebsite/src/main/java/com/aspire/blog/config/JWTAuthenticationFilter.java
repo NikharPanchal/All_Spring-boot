@@ -15,12 +15,12 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.aspire.blog.service.BlogService;
+import com.aspire.blog.service.UserService;
 
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 	@Autowired
-	private BlogService userService;
+	private UserService userService;
 	
 	@Autowired
 	private JWTAuthentication jwtUtil;

@@ -1,5 +1,6 @@
 package com.aspire.blog.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,29 +18,29 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aspire.blog.config.JWTAuthentication;
-import com.aspire.blog.service.BlogService;
+import com.aspire.blog.service.UserService;
 import com.aspire.blog.utils.JwtToken;
 import com.aspire.blog.utils.MyToken;
 import com.aspire.blog.utils.Users;
 
-
 @RestController
 @RequestMapping("/blog")
 @CrossOrigin(origins = "http://localhost:4200")
-public class BlogControlller {
+public class UserControlller {
 
 	@Autowired
-	private BlogService service;
+	private UserService service;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
+
 	@Autowired
 	private JWTAuthentication authentication;
 
@@ -59,7 +60,7 @@ public class BlogControlller {
 	public ResponseEntity<Users> saveUserDetails(@RequestBody Users user) {
 		Users userResponse = null;
 		try {
-			//user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
+			// user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 			userResponse = service.saveUserInfo(user);
 		} catch (Exception e) {
@@ -145,8 +146,8 @@ public class BlogControlller {
 		System.out.println(token.getEmail());
 		System.out.println(token.getPassword());
 		try {
-			authenticationManager.authenticate(
-					new UsernamePasswordAuthenticationToken(token.getEmail(), token.getPassword()));
+			authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(token.getEmail(), token.getPassword()));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -160,4 +161,18 @@ public class BlogControlller {
 		return ResponseEntity.ok().body(new MyToken(mytoken));
 	}
 
+	@PostMapping("/checkEmail")
+	public Boolean checkEmailAddress(@RequestBody Users email) {
+		System.out.println(email);
+		Boolean result = service.checkEmailAddress(email);
+		return result;
+	}
+	
+	@PostMapping("/isactive")
+	public Boolean checkUserIsActive(@RequestBody Users email) {
+		System.out.println(email);
+		Boolean result = service.checkUserIsActive(email);
+		return result;
+	}
+	
 }
