@@ -12,4 +12,6 @@ public interface BlogDao extends JpaRepository<Blog, Integer>{
 
 	public List<Blog> findAllByEmail(String email);
 
+	public List<Blog> findAllByblogId(int id);
+
 }

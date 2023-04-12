@@ -37,4 +37,13 @@ public class BlogService {
 		return blogList;
 	}
 
+	public List<Blog> getBlogById(int id) {
+		List<Blog> blogList=blogDao.findAllByblogId(id);
+		return blogList;
+	}
+
+	public Blog getBlogByBlogId(Integer id) {
+		Blog blog =blogDao.findById(id).orElse(null);
+		return blog;
+	}
 }

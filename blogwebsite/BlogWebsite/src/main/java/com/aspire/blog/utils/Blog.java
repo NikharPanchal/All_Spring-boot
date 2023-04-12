@@ -17,7 +17,7 @@ import lombok.ToString;
 public class Blog {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	int blogId;
 	
 	@Column(name="title",nullable = false)

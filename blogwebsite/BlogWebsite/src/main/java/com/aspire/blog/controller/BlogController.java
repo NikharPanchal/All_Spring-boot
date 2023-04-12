@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aspire.blog.service.BlogService;
 import com.aspire.blog.utils.Blog;
+import com.aspire.blog.utils.Users;
 
 @RestController
 @RequestMapping("/blogs")
@@ -68,5 +70,41 @@ public class BlogController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(blogList);
+	}
+	
+	@GetMapping("/findBlogById/{id}")
+	public ResponseEntity getBlogById(@PathVariable("id") int id) {
+		List<Blog> blogList=null;
+		try {
+			blogList=blogService.getBlogById(id);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+		
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(blogList);
+	}
+	
+	@PutMapping("/updateBlog/{id}")
+	public ResponseEntity<Blog> updateBlog(@PathVariable("id") Integer id, @RequestBody Blog blog) {
+		Blog blogResponse = null;
+		Blog getBlogByid = null;
+		try {
+			System.out.println("blog :- "+blog);
+			getBlogByid = blogService.getBlogByBlogId(id);
+			System.out.println(getBlogByid);
+			if (getBlogByid != null) {
+				blogResponse = blogService.saveUserBlog(blog);
+				
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		return ResponseEntity.accepted().body(blogResponse);
 	}
 }
