@@ -1,17 +1,16 @@
 package com.aspire.blog.utils;
 
+import java.util.Arrays;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import com.mysql.cj.jdbc.Blob;
+
 
 @Entity
 public class Blog {
@@ -29,6 +28,12 @@ public class Blog {
 	@Column(name="user_email",nullable = false)
 	private String email;
 
+	@Column(name="blog_image_name")
+	private String image;
+	
+	@Column(name="image_byte",length=1000)
+	private byte[] imageByte;
+	
 	public int getBlogId() {
 		return blogId;
 	}
@@ -61,24 +66,42 @@ public class Blog {
 		this.email = email;
 	}
 
-	@Override
-	public String toString() {
-		return "Blog [blogId=" + blogId + ", blogTitle=" + blogTitle + ", blogDescription=" + blogDescription
-				+ ", email=" + email + "]";
-	}
-
-	public Blog(int blogId, String blogTitle, String blogDescription, String email) {
-		super();
-		this.blogId = blogId;
-		this.blogTitle = blogTitle;
-		this.blogDescription = blogDescription;
-		this.email = email;
-	}
 
 	public Blog() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Blog [blogId=" + blogId + ", blogTitle=" + blogTitle + ", blogDescription=" + blogDescription
+				+ ", email=" + email + ", image=" + image + ", imageByte=" + Arrays.toString(imageByte) + "]";
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public byte[] getImageByte() {
+		return imageByte;
+	}
+
+	public void setImageByte(byte[] imageByte) {
+		this.imageByte = imageByte;
+	}
+
+	public Blog(int blogId, String blogTitle, String blogDescription, String email, String image, byte[] imageByte) {
+		super();
+		this.blogId = blogId;
+		this.blogTitle = blogTitle;
+		this.blogDescription = blogDescription;
+		this.email = email;
+		this.image = image;
+		this.imageByte = imageByte;
+	}
+
 }

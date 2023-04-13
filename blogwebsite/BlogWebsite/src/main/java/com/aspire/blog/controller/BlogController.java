@@ -1,10 +1,12 @@
 package com.aspire.blog.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,25 +15,51 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.aspire.blog.service.BlogService;
 import com.aspire.blog.utils.Blog;
-import com.aspire.blog.utils.Users;
+import com.aspire.blog.utils.FileUploadUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/blogs")
 @CrossOrigin(origins = "http://localhost:4200")
 public class BlogController {
 
+	
 	@Autowired
 	private BlogService blogService;
 	
 	@PostMapping("/saveBlog")
-	public ResponseEntity saveUserBlog(@RequestBody Blog blog) {
+	public ResponseEntity<Blog> saveUserBlog(@RequestParam("file") MultipartFile file, @RequestParam("blog") String blog) throws IOException {
+		
+		
+		Blog blogData=new ObjectMapper().readValue(blog, Blog.class);
+		
+		Blog blogResponse=null;
+		
 		
 		System.out.println(blog);
-		Blog blogResponse=blogService.saveUserBlog(blog);
+		if (!file.isEmpty()) {
+			String cleanPath = StringUtils.cleanPath(file.getOriginalFilename());
+			System.out.println(cleanPath);
+			blogData.setImage(cleanPath);
+			blogData.setImageByte(file.getBytes());
+			blogResponse=blogService.saveUserBlog(blogData);
+			String upload = "images/";
+
+			FileUploadUtil.saveFile(upload, cleanPath, file);
+		} else {
+			if (blogData.getImage().isEmpty()) {
+				blogData.setImage(null);
+				blogService.saveUserBlog(blogData);
+			}
+		}
+		
+		System.out.println(blog);
 		
 		return ResponseEntity.ok(blogResponse);
 	}

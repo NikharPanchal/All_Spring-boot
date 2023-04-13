@@ -29,7 +29,7 @@ import com.aspire.blog.utils.Users;
 
 @RestController
 @RequestMapping("/blog")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class UserControlller {
 
 	@Autowired
