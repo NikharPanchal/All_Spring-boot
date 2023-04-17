@@ -22,7 +22,7 @@ public class Blog {
 	@Column(name="title",nullable = false)
 	private String blogTitle;
 	
-	@Column(name="description",nullable = false)
+	@Column(name="description",nullable = false,length = 5000)
 	private String blogDescription;
 	
 	@Column(name="user_email",nullable = false)
@@ -31,7 +31,7 @@ public class Blog {
 	@Column(name="blog_image_name")
 	private String image;
 	
-	@Column(name="image_byte",length=1000)
+	@Column(name="image_byte",length=10000)
 	private byte[] imageByte;
 	
 	public int getBlogId() {

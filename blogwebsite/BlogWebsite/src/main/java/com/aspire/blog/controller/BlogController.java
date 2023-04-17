@@ -68,7 +68,6 @@ public class BlogController {
 	public ResponseEntity<List<Blog>> getAllBlogs() {
 		
 		List<Blog> blogList=blogService.fetchAllBlogs();
-		System.out.println(blogList);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(blogList);
 	}

@@ -14,7 +14,7 @@ public class BlogService {
 	@Autowired
 	private BlogDao blogDao;
 
-	public Blog saveUserBlog(Blog blog) {
+	public Blog saveUserBlog(Blog blog) {	
 		
 		Blog blogResponse=blogDao.save(blog);
 		
