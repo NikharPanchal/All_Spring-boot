@@ -46,4 +46,9 @@ public class BlogService {
 		Blog blog =blogDao.findById(id).orElse(null);
 		return blog;
 	}
+
+	public Blog updateUserBlog(Blog blog) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

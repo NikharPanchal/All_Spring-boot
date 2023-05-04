@@ -49,11 +49,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         .and()
         .csrf().disable()	
         .authorizeRequests()
-        .antMatchers("/blog/**").permitAll()
-        .antMatchers("/blogs/**").permitAll()
+        .antMatchers("/blog/token/**").permitAll()
+        .antMatchers("/blog/isactive/**").permitAll()
         .anyRequest().authenticated()
-        .and()
-        .httpBasic()
         .and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     
@@ -75,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication().withUser("admin").password(passwordEncoder().encode("admin")).roles("USER");
+//		auth.inMemoryAuthentication().withUser("admin").password(passwordEncoder().encode("admin")).roles("admin");
 //		.and().withUser("user").password("admin").roles("USER","");
 		auth.userDetailsService(blogService)
 		.passwordEncoder(passwordEncoder());

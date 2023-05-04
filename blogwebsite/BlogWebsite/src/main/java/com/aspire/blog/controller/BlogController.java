@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,16 +37,14 @@ public class BlogController {
 	@PostMapping("/saveBlog")
 	public ResponseEntity<Blog> saveUserBlog(@RequestParam("file") MultipartFile file, @RequestParam("blog") String blog) throws IOException {
 		
-		
 		Blog blogData=new ObjectMapper().readValue(blog, Blog.class);
 		
 		Blog blogResponse=null;
 		
-		
 		System.out.println(blog);
 		if (!file.isEmpty()) {
 			String cleanPath = StringUtils.cleanPath(file.getOriginalFilename());
-			System.out.println(cleanPath);
+			//System.out.println(cleanPath);
 			blogData.setImage(cleanPath);
 			blogData.setImageByte(file.getBytes());
 			blogResponse=blogService.saveUserBlog(blogData);
@@ -59,7 +58,7 @@ public class BlogController {
 			}
 		}
 		
-		System.out.println(blog);
+		//System.out.println(blog);
 		
 		return ResponseEntity.ok(blogResponse);
 	}
@@ -114,24 +113,32 @@ public class BlogController {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(blogList);
 	}
 	
-	@PutMapping("/updateBlog/{id}")
-	public ResponseEntity<Blog> updateBlog(@PathVariable("id") Integer id, @RequestBody Blog blog) {
-		Blog blogResponse = null;
-		Blog getBlogByid = null;
-		try {
-			System.out.println("blog :- "+blog);
-			getBlogByid = blogService.getBlogByBlogId(id);
-			System.out.println(getBlogByid);
-			if (getBlogByid != null) {
-				blogResponse = blogService.saveUserBlog(blog);
-				
-			} else {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+	@PostMapping("/updateBlog")
+	public ResponseEntity<Blog> updateUserBlog(@RequestPart(name="file",required = false) MultipartFile file, @RequestParam("blog") String blog) throws IOException {
+		
+		Blog blogData=new ObjectMapper().readValue(blog, Blog.class);
+		
+		System.out.println(blogData.getImage());
+		System.out.println(blog);
+		
+		Blog blogResponse=null;
+		
+		if (!file.isEmpty()) {
+			String cleanPath = StringUtils.cleanPath(file.getOriginalFilename());
+			//System.out.println(cleanPath);
+			blogData.setImage(cleanPath);
+			blogData.setImageByte(file.getBytes());
+			blogResponse=blogService.saveUserBlog(blogData);
+			String upload = "images/";
+
+			FileUploadUtil.saveFile(upload, cleanPath, file);
+		}else
+		{
+			System.out.println("file is null");
 		}
-		return ResponseEntity.accepted().body(blogResponse);
+		
+		//System.out.println(blog);
+		
+		return ResponseEntity.ok(blogResponse);
 	}
 }
